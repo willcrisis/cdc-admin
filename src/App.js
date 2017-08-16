@@ -14,9 +14,14 @@ class App extends Component {
         this.setNome = this.setNome.bind(this);
         this.setEmail = this.setEmail.bind(this);
         this.setSenha = this.setSenha.bind(this);
+        this.get = this.get.bind(this);
     }
 
     componentDidMount() {
+        this.get();
+    }
+
+    get() {
         $.ajax({
             type: 'GET',
             url: 'http://localhost:8080/api/autores',
@@ -35,8 +40,8 @@ class App extends Component {
             contentType: 'application/json',
             dataType: 'json',
             data: JSON.stringify({nome: this.state.nome, email: this.state.email, senha: this.state.senha}),
-            success: dados => {
-                console.log('sucesso');
+            success: () => {
+                this.get();
             },
             error: erro => {
                 console.log(erro);
