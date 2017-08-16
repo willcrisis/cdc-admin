@@ -11,8 +11,16 @@ export default class InputLabel extends Component {
         return (
             <div className="pure-control-group">
                 <label htmlFor={this.props.id}>{this.props.label}</label>
-                <input id={this.props.id} type={this.props.type} name={this.props.name} value={this.props.value}
-                       onChange={this.props.onChange}/>
+                <select id={this.props.id} name={this.props.name} onChange={this.props.onChange}>
+                    <option value="">Selecione...</option>
+                    {
+                        this.props.lista.map(item => {
+                            return(
+                                <option key={item[this.props.itemId]} value={item[this.props.itemId]}>{item[this.props.itemLabel]}</option>
+                            );
+                        })
+                    }
+                </select>
                 <span className="danger">{this.state.errorMsg}</span>
             </div>
         );

@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import $ from "jquery";
 import InputLabel from "./componentes/InputLabel";
 import Button from "./componentes/Button";
+import PubSub from "pubsub-js";
+import TratadorErros from "./TratadorErros";
 
 class FormularioAutor extends Component {
     constructor() {
@@ -24,10 +26,17 @@ class FormularioAutor extends Component {
             dataType: 'json',
             data: JSON.stringify({nome: this.state.nome, email: this.state.email, senha: this.state.senha}),
             success: dados => {
-                this.props.callback(dados);
+                PubSub.publish('autor-cadastrado', dados);
+                this.setState({nome: '', email: '', senha: ''});
+                PubSub.publish('clear-errors');
             },
             error: erro => {
-                console.log(erro);
+                if (erro.status === 400) {
+                    new TratadorErros().publicarErros(erro.responseJSON.errors);
+                }
+            },
+            beforeSend: () => {
+                PubSub.publish('clear-errors');
             }
         });
     }
@@ -100,6 +109,10 @@ export default class AutorBox extends Component {
 
     componentDidMount() {
         this.get();
+
+        PubSub.subscribe('autor-cadastrado', () => {
+            this.get();
+        })
     }
 
     get() {
@@ -116,8 +129,14 @@ export default class AutorBox extends Component {
     render() {
         return (
             <div>
-                <FormularioAutor callback={this.get}/>
-                <ListaAutor lista={this.state.lista}/>
+                <div className="header">
+                    <h1>Autores</h1>
+                </div>
+
+                <div className="content" id="content">
+                    <FormularioAutor />
+                    <ListaAutor lista={this.state.lista}/>
+                </div>
             </div>
         );
     }
