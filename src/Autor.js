@@ -12,9 +12,6 @@ class FormularioAutor extends Component {
         this.state = {nome: '', email: '', senha: ''};
 
         this.submeter = this.submeter.bind(this);
-        this.setNome = this.setNome.bind(this);
-        this.setEmail = this.setEmail.bind(this);
-        this.setSenha = this.setSenha.bind(this);
     }
 
     submeter(evento) {
@@ -41,28 +38,24 @@ class FormularioAutor extends Component {
         });
     }
 
-    setNome(evento) {
-        this.setState({nome: evento.target.value});
-    }
-
-    setEmail(evento) {
-        this.setState({email: evento.target.value});
-    }
-
-    setSenha(evento) {
-        this.setState({senha: evento.target.value});
+    bind(name, event) {
+        let obj = {};
+        obj[name] = event.target.value;
+        this.setState(obj);
     }
 
     render() {
         return (
             <div className="pure-form pure-form-aligned">
                 <form className="pure-form pure-form-aligned" onSubmit={this.submeter}>
-                    <InputLabel id="nome" type="text" name="nome" value={this.state.nome} onChange={this.setNome}
+                    <InputLabel id="nome" type="text" name="nome" value={this.state.nome}
+                                onChange={this.bind.bind(this, 'nome')}
                                 label="Nome"/>
-                    <InputLabel id="email" type="email" name="email" value={this.state.email} onChange={this.setEmail}
+                    <InputLabel id="email" type="email" name="email" value={this.state.email}
+                                onChange={this.bind.bind(this, 'email')}
                                 label="E-mail"/>
                     <InputLabel id="senha" type="password" name="senha" value={this.state.senha}
-                                onChange={this.setSenha} label="Senha"/>
+                                onChange={this.bind.bind(this, 'senha')} label="Senha"/>
                     <Button type="submit" label="Gravar"/>
                 </form>
             </div>

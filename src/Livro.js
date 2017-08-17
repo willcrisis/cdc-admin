@@ -13,9 +13,6 @@ class FormularioLivro extends Component {
         this.state = {preco: '', titulo: '', autorId: ''};
 
         this.submeter = this.submeter.bind(this);
-        this.setPreco = this.setPreco.bind(this);
-        this.setTitulo = this.setTitulo.bind(this);
-        this.setAutor = this.setAutor.bind(this);
     }
 
     submeter(evento) {
@@ -43,25 +40,24 @@ class FormularioLivro extends Component {
         });
     }
 
-    setPreco(event) {
-        this.setState({preco: event.target.value});
-    }
-    setTitulo(event) {
-        this.setState({titulo: event.target.value});
-    }
-    setAutor(event) {
-        this.setState({autorId: event.target.value});
+    bind(name, event) {
+        let obj = {};
+        obj[name] = event.target.value;
+        this.setState(obj);
     }
 
     render() {
         return (
             <div className="pure-form pure-form-aligned">
                 <form className="pure-form pure-form-aligned" onSubmit={this.submeter}>
-                    <InputLabel id="titulo" type="text" name="titulo" value={this.state.titulo} onChange={this.setTitulo}
+                    <InputLabel id="titulo" type="text" name="titulo" value={this.state.titulo}
+                                onChange={this.bind.bind(this, 'titulo')}
                                 label="Título"/>
-                    <InputLabel id="preco" type="number" name="preco" value={this.state.preco} onChange={this.setPreco}
+                    <InputLabel id="preco" type="number" name="preco" value={this.state.preco}
+                                onChange={this.bind.bind(this, 'preco')}
                                 label="Preço"/>
-                    <SelectLabel id="autorId" name="autorId" onChange={this.setAutor} label="Autor" lista={this.props.autores} itemId="id" itemLabel="nome" value={this.state.autorId}/>
+                    <SelectLabel id="autorId" name="autorId" onChange={this.bind.bind(this, 'autorId')} label="Autor"
+                                 lista={this.props.autores} itemId="id" itemLabel="nome" value={this.state.autorId}/>
                     <Button type="submit" label="Gravar"/>
                 </form>
             </div>
@@ -137,14 +133,14 @@ export default class LivroBox extends Component {
     }
 
     render() {
-        return(
+        return (
             <div>
                 <div className="header">
                     <h1>Livros</h1>
                 </div>
 
                 <div className="content" id="content">
-                    <FormularioLivro autores={this.state.autores} />
+                    <FormularioLivro autores={this.state.autores}/>
                     <ListaLivros lista={this.state.lista}/>
                 </div>
             </div>
