@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import PubSub from "pubsub-js";
 
-export default class InputLabel extends Component {
+export default class SelectLabel extends Component {
     constructor() {
         super();
         this.state = {errorMsg: ''};
@@ -11,7 +11,7 @@ export default class InputLabel extends Component {
         return (
             <div className="pure-control-group">
                 <label htmlFor={this.props.id}>{this.props.label}</label>
-                <select id={this.props.id} name={this.props.name} onChange={this.props.onChange}>
+                <select id={this.props.id} name={this.props.name} onChange={this.props.onChange} value={this.props.value}>
                     <option value="">Selecione...</option>
                     {
                         this.props.lista.map(item => {

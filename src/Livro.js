@@ -6,11 +6,11 @@ import Button from "./componentes/Button";
 import PubSub from "pubsub-js";
 import TratadorErros from "./TratadorErros";
 
-class LivroFormulario extends Component {
+class FormularioLivro extends Component {
     constructor() {
         super();
 
-        this.state = {preco: '', titulo: '', autorId: '', autores: []};
+        this.state = {preco: '', titulo: '', autorId: ''};
 
         this.submeter = this.submeter.bind(this);
         this.setPreco = this.setPreco.bind(this);
@@ -18,28 +18,18 @@ class LivroFormulario extends Component {
         this.setAutor = this.setAutor.bind(this);
     }
 
-    componentWillMount() {
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:8080/api/autores',
-            dataType: 'json',
-            success: dados => {
-                this.setState({autores: dados});
-            }
-        });
-    }
-
     submeter(evento) {
         evento.preventDefault();
+        console.log(this.state.autorId);
         $.ajax({
             type: 'POST',
             url: 'http://localhost:8080/api/livros',
             contentType: 'application/json',
             dataType: 'json',
-            data: JSON.stringify({preco: this.state.preco, titulo: this.state.titulo, autor: parseInt(this.state.autorId)}),
+            data: JSON.stringify({preco: this.state.preco, titulo: this.state.titulo, autorId: this.state.autorId}),
             success: dados => {
                 PubSub.publish('livro-cadastrado', dados);
-                this.setState({preco: '', titulo: '', autor: ''});
+                this.setState({preco: '', titulo: '', autorId: ''});
                 PubSub.publish('clear-errors');
             },
             error: erro => {
@@ -60,7 +50,6 @@ class LivroFormulario extends Component {
         this.setState({titulo: event.target.value});
     }
     setAutor(event) {
-        console.log(event.target.value);
         this.setState({autorId: event.target.value});
     }
 
@@ -72,7 +61,7 @@ class LivroFormulario extends Component {
                                 label="Título"/>
                     <InputLabel id="preco" type="number" name="preco" value={this.state.preco} onChange={this.setPreco}
                                 label="Preço"/>
-                    <SelectLabel id="autorId" name="autorId" onChange={this.setAutor} label="Autor" lista={this.state.autores} itemId="id" itemLabel="nome"/>
+                    <SelectLabel id="autorId" name="autorId" onChange={this.setAutor} label="Autor" lista={this.props.autores} itemId="id" itemLabel="nome" value={this.state.autorId}/>
                     <Button type="submit" label="Gravar"/>
                 </form>
             </div>
@@ -115,12 +104,21 @@ export default class LivroBox extends Component {
     constructor() {
         super();
 
-        this.state = {lista: []};
+        this.state = {lista: [], autores: []};
         this.get = this.get.bind(this);
     }
 
     componentDidMount() {
         this.get();
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/api/autores',
+            dataType: 'json',
+            success: dados => {
+                this.setState({autores: dados});
+            }
+        });
 
         PubSub.subscribe('livro-cadastrado', () => {
             this.get();
@@ -146,7 +144,7 @@ export default class LivroBox extends Component {
                 </div>
 
                 <div className="content" id="content">
-                    <LivroFormulario />
+                    <FormularioLivro autores={this.state.autores} />
                     <ListaLivros lista={this.state.lista}/>
                 </div>
             </div>
